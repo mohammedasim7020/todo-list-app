@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Box, TextField, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import { Button } from "@mui/material";
 
 import updateInputValue from "../Genral/genral";
 import TableForList from "./TableForList";
@@ -10,6 +12,7 @@ export default function TodoList() {
   const [inputValue, setInputValue] = useState("");
   const [todos, setTodos] = useState([]);
   const [ifFalse, setIfFalse] = useState(false);
+  const [isEdite, setIsEdite] = useState(true);
 
   const obj = {
     title: inputValue,
@@ -24,11 +27,34 @@ export default function TodoList() {
     setTodos((priv) => [...priv, obj]);
     setInputValue("");
   };
+
+  const handleClose = () => {
+    setIfFalse(false);
+  };
+
+  const handleUpdate = () => {
+    const array = [...todos];
+    array.splice(obj.ind, 1, obj);
+    setTodos(array);
+    setInputValue("");
+    setIsEdite(true);
+  };
   return (
     <>
       <section className="todo-list">
         <Box className="box">
           <h3>Enter Your Task</h3>
+          {ifFalse === false ? null : (
+            <Fab
+              size="small"
+              sx={{ bgcolor: "red" }}
+              className="close-icon"
+              onClick={() => handleClose()}
+            >
+              <CloseIcon />
+            </Fab>
+          )}
+
           <div className="for-space-btn">
             {ifFalse === false ? null : (
               <TextField
@@ -38,22 +64,35 @@ export default function TodoList() {
                 onChange={(event) => updateInputValue(event, setInputValue)}
               />
             )}
+
             {ifFalse === false ? (
-              <ArrowCircleLeftSharpIcon
-                className="arrow"
-                fontSize="large"
-                onClick={handleclick}
-              />
-            ) : (
-              <Fab color="primary" aria-label="add" onClick={handleList}>
-                <AddIcon />
+              <Fab className="arrow" size="small" onClick={handleclick}>
+                <ArrowCircleLeftSharpIcon />
               </Fab>
+            ) : (
+              <>
+                {isEdite ? (
+                  <Fab
+                    color="primary"
+                    size="medium"
+                    aria-label="add"
+                    onClick={handleList}
+                  >
+                    <AddIcon />
+                  </Fab>
+                ) : (
+                  <Button variant="contained" onClick={handleUpdate}>
+                    Update
+                  </Button>
+                )}
+              </>
             )}
           </div>
           <TableForList
             todos={todos}
             setTodos={setTodos}
             setInputValue={setInputValue}
+            setIsEdite={setIsEdite}
           />
         </Box>
       </section>
